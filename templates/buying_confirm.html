@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Confirmation
+{% endblock %}
+
+{% block main %}
+<div class="alert">
+    <div class="form">
+        <h6>Cash: Current cash <sup style="color: red;">-{{buydatas["totalcost"] | usd}}</sup> ({{buydatas["leftcash"] | usd}})</h6>
+        <h4>Are you sure you want to buy {{buydatas["numofshares"]}} shares of {{buydatas["stockname"]}} for {{buydatas["totalcost"] | usd}}?</h4>
+        <div class="button">
+            <button id="no">No</button>
+            <form action="/buy" method="POST" class="popform">
+                <button name="buybutton" value="True" id="yes">Yes</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <form action="/login" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text" value="{% if login_data != 0%}{{ login_data['user'] }}{% endif %}" required>
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password" value="{% if login_data != 0 %}{{ login_data['password'] }}{% endif %}" required>
+        </div>
+        <button class="btn btn-primary" type="submit" id="submit_btn">Log In</button>
+    </form>
+    {% if login_data.function == 1 %}
+        <script src="static/autoclick.js"></script>
+    {% endif %}
+{% endblock %}

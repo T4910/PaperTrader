@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quoted
+{% endblock %}
+
+{% block main %}
+    <h3>Your cash: {{cash | usd}}</h3>
+   <table class="quote">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th style="width: 50%">Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{tabledata['symbol']}}</td>
+                <td style="width: 50%">{{tabledata['name']}}</td>
+                <td>{{tabledata['price'] | usd}}</td>
+            </tr>
+        </tbody>
+   </table>
+   <p class="quote_sentence">A share of {{tabledata['name']}} ({{tabledata['symbol']}}) at this moment costs {{tabledata['price'] | usd}}.</p>
+{% endblock %}

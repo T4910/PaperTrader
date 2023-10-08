@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Buy
+{% endblock %}
+
+{% block main %}
+    <h3>Your cash: {{cash | usd}}</h3>
+    {% if buydatas["bought_state"] == 1 %}
+    <div class="bought">
+        Bought!
+    </div>
+    {% endif %}
+    {% if buydatas["popup_state"] == 1 %}
+    <div class="alert">
+        <div class="form">
+            <h6>
+                Cash: {{cash | usd}}
+                <sup style="color: red;">
+                    -{{buydatas["totalcost"] | usd}}
+                </sup>
+                ({{buydatas["leftcash"] | usd}})
+            </h6>
+            <h4>Are you sure you want to buy {{buydatas["numofshares"]}} shares of {{buydatas["stockname"]}} for {{buydatas["totalcost"] | usd}}?</h4>
+            <div class="button">
+                <form action="/buy" method="{% if buydatas['bought_state'] == 0 %}POST{% elif buydatas['bought_state'] == 1 %}GET{% endif %}" class="popform">
+                    <input type="hidden" name="purchase" value="{% if buydatas['bought_state'] == 0 %}1{% elif buydatas['bought_state'] == 1 %}None{% endif %}">
+                    <button name="no_purchase" value="1" id="no">No</button>
+                    <button name="purchase" value="{% if buydatas['bought_state'] == 0 %}1{% elif buydatas['bought_state'] == 1 %}None{% endif %}" id="yes">Yes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <table class="buy">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Shares</th>
+                <th>Price</th>
+                <th>TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{buydatas["symbol"]}}</td>
+                <td>{{buydatas["stockname"]}}</td>
+                <td>{{buydatas["numofshares"]}}</td>
+                <td>{{buydatas["price"] | usd}}</td>
+                <td>{{buydatas["totalcost"] | usd}}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% if buydatas["bought_state"] != 1 %}
+        <form action="/buy" method="POST">
+            <button class="btn btn-primary" name="reveal" value="1" type="submit" id="buy_btn">Buy</button>
+        </form>
+    {% endif %}
+{% endblock %}
