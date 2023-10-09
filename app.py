@@ -6,13 +6,9 @@ from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 import sqlite3
-from dotenv import load_dotenv
 import warnings
 
 from helpers import apology, login_required, lookup, usd
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Configure application
 app = Flask(__name__)
@@ -28,9 +24,47 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Configure CS50 Library to use SQLite database
-db = SQL(os.environ.get("DB_URL"))
+def add_tables():
 
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS temp_info (
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            user_id INTEGER NOT NULL,
+            symbol TEXT NOT NULL,
+            share_num INTERGER NOT NULL
+        );
+    """)
+    
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT NOT NULL, hash TEXT NOT NULL, cash NUMERIC NOT NULL DEFAULT 10000.00);
+    """)
+    
+    db.execute("CREATE UNIQUE INDEX IF NOT EXISTS username ON users (username);")
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS users_shares (
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            user_id INTEGER NOT NULL,
+            symbol TEXT NOT NULL,
+            numshares INTEGER UNSIGNED NOT NULL,
+            price MONEY NOT NULL,
+            time DATETIME NOT NULL, 
+            newcash MONEY NOT NULL, 
+            transaction_type TEXT
+        );    
+    """)
+
+
+# Configure CS50 Library to use SQLite database
+try:
+    f = open("finance.db", "x")
+except:
+    print('db exists')
+
+db = SQL("sqlite:///finance.db")
+add_tables()
+ 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
      warnings.warn("API_KEY not set")
@@ -515,42 +549,8 @@ def sell():
 
         return render_template("sell_form.html", shares=shares, cash=cash)
 
-def start_db():
-
-    try:
-        f = open("finance.db", "x")
-    except:
-        print('db exists')
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS temp_info (
-            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            user_id INTEGER NOT NULL,
-            symbol TEXT NOT NULL,
-            share_num INTERGER NOT NULL
-        );
-    """)
-    
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT NOT NULL, hash TEXT NOT NULL, cash NUMERIC NOT NULL DEFAULT 10000.00);
-    """)
-    
-    db.execute("CREATE UNIQUE INDEX IF NOT EXISTS username ON users (username);")
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS users_shares (
-            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            user_id INTEGER NOT NULL,
-            symbol TEXT NOT NULL,
-            numshares INTEGER UNSIGNED NOT NULL,
-            price MONEY NOT NULL,
-            time DATETIME NOT NULL, 
-            newcash MONEY NOT NULL, 
-            transaction_type TEXT
-        );    
-    """)
 
 
 if __name__ == '__main__':
-    start_db()
+    # start_db()
     app.run()
